@@ -1,0 +1,27 @@
+2023-02-06 09:51:02 WARNING     PyNaCl is not installed, voice will NOT be supported
+2023-02-06 09:51:02 INFO     logging in using static token
+2023-02-06 09:51:03 INFO     Shard ID None has connected to Gateway (Session ID: 0042f1478b7e976d486f329d3c1d3f69).
+2023-02-06 09:51:05 INFO     Bot is ready
+2023-02-06 09:53:50 INFO     Hazzah#2400 reacted to Developer role
+2023-02-06 09:53:56 INFO     Hazzah#2400 reacted to Stoner role
+2023-02-06 09:53:57 INFO     Hazzah#2400 reacted to Gamer role
+2023-02-06 10:29:29 INFO     Hazzah#2400 said ffyyg
+2023-02-06 10:29:30 INFO     Hazzah#2400 said ccdrgv
+2023-02-06 10:29:31 INFO     Hazzah#2400 said v
+2023-02-06 10:29:32 INFO     Hazzah#2400 said vvfy
+2023-02-06 10:29:34 INFO     Hazzah#2400 said vvu
+2023-02-06 10:29:45 INFO     Hazzah#2400 said #clear
+2023-02-06 10:29:49 INFO     Hazzah#2400 cleared messages
+2023-02-06 10:38:38 ERROR     Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x000001D774600670>
+2023-02-06 10:38:38 ERROR     Fatal error on SSL transport
+protocol: <asyncio.sslproto.SSLProtocol object at 0x000001D774621720>
+transport: <_ProactorSocketTransport fd=964 read=<_OverlappedFuture cancelled>>
+Traceback (most recent call last):
+  File "C:\Users\hazza\anaconda3\envs\discord\lib\asyncio\sslproto.py", line 690, in _process_write_backlog
+    self._transport.write(chunk)
+  File "C:\Users\hazza\anaconda3\envs\discord\lib\asyncio\proactor_events.py", line 365, in write
+    self._loop_writing(data=bytes(data))
+  File "C:\Users\hazza\anaconda3\envs\discord\lib\asyncio\proactor_events.py", line 401, in _loop_writing
+    self._write_fut = self._loop._proactor.send(self._sock, data)
+AttributeError: 'NoneType' object has no attribute 'send'
