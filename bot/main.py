@@ -1,13 +1,23 @@
 import discord
 from discord.ext import commands
 import os
-from dotenv import load_dotenv
 import logging
+import asyncio
+import nest_asyncio
 if __name__ != '__main__':
-    import bot.commands as custom_commands
-    import bot.events as custom_events
+    from bot.constants import BOT_TOKEN
 
-def __setup_logging():
+class Bot(commands.Bot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    async def load_extensions(self):
+        for filename in os.listdir("bot/cogs"):
+            if filename.endswith(".py"):
+                # cut off the .py from the file name and load extension
+                await self.load_extension(f"bot.cogs.{filename[:-3]}")
+
+def setup_logging():
     """Setup logging to file and console"""
     # clear log file
     with open('bot.log', 'w') as f:
@@ -25,23 +35,13 @@ def __setup_logging():
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 
+async def main():
+    setup_logging()
+    async with Bot(command_prefix='#', intents=discord.Intents.all()) as bot:
+        await bot.load_extensions()
+        bot.run(BOT_TOKEN)
+
 def start():
-    """load environment variables, setup logging and initialize bot"""
-    # load environment variables and setup logging
-    load_dotenv()
-    __setup_logging()
-    # initialize
-    intents = discord.Intents.default()
-    intents.members = True
-    intents.presences = True
-    intents.reactions = True
-    intents.message_content = True
-    bot = commands.Bot(command_prefix='#', intents=intents)
-    # add each function in custom_events
-    for event in custom_events.__all__:
-        getattr(custom_events, event)(bot)
-    # add each custom commands
-    for command in custom_commands.__all__:
-        bot.add_command(getattr(custom_commands, command))
-    # start
-    bot.run(os.getenv('TOKEN'))
+    nest_asyncio.apply()
+    asyncio.run(main())
+
