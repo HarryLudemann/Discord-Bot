@@ -3,8 +3,9 @@ import psycopg2
 
 if __name__ == "__main__":
     from bot.util.database.bank_database import Database
+    from bot.constants import POSTGRES_DATABASE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST
 
-    
+
 class Database:
     CHECK_USER_QUERY = lambda user_id: f"SELECT * FROM users WHERE id = {user_id}"
     GET_BALANCE_QUERY = lambda user_id: f"SELECT balance FROM users WHERE id = {user_id}"
@@ -14,10 +15,10 @@ class Database:
         """ Connect to local MySQL database, check db exits"""
         try:
             conn = psycopg2.connect(
-                host="13.236.135.75",
-                database="postgres",
-                user="hazzah",
-                password="harlud"
+                host=POSTGRES_HOST,
+                database=POSTGRES_DATABASE,
+                user=POSTGRES_USER,
+                password=POSTGRES_PASSWORD
             )
             # create user table if doesn't exists
             query = """CREATE TABLE IF NOT EXISTS users (
