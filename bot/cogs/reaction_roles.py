@@ -10,20 +10,20 @@ class ReactionRoles(commands.Cog, name='Reaction Roles'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        """Add message and reactions to react role channel on bot startup"""
-        async def add_reaction_roles(bot) -> None:
-            channel = bot.get_channel(REACTION_ROLE_CHANNEL_ID)
-            await channel.purge() # clear channel
-            text= "Reaction Roles:\n\n"
-            for role in ROLES.keys():
-                text += f"{role}: {ROLES[role]}\n"
-            message = await channel.send(text)
-            for emoji in ROLES.keys():
-                await message.add_reaction(emoji)
+    # @commands.Cog.listener()
+    # async def on_ready(self):
+    #     """Add message and reactions to react role channel on bot startup"""
+    #     async def add_reaction_roles(bot) -> None:
+    #         channel = bot.get_channel(REACTION_ROLE_CHANNEL_ID)
+            # await channel.purge() # clear channel
+            # text= "Reaction Roles:\n\n"
+            # for role in ROLES.keys():
+            #     text += f"{role}: {ROLES[role]}\n"
+            # message = await channel.send(text)
+            # for emoji in ROLES.keys():
+            #     await message.add_reaction(emoji)
 
-        await add_reaction_roles(self.bot)
+        # await add_reaction_roles(self.bot)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):

@@ -1,0 +1,7 @@
+.vscode
+.gitignore
+.gitattributes
+Python-Discord.ppk
+README.md
+tester.py
+__pycache__
