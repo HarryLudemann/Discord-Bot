@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog, command, has_permissions, MemberConverter
 import logging
 if __name__ != '__main__':
-    from bot.util.database.bank_database import BankDatabase
+    from bot.util.database import BankDatabase
 
 class Bank(Cog, name='Bank'):
     """User bank accounts"""

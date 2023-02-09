@@ -15,7 +15,6 @@ PREFIX = '#'
 REACTION_ROLE_CHANNEL_ID = 1071669604809711636
 
 ROLES = {
-    # verified role
     '✅': 'Verified',
     '👨‍💻': 'Developer',
     '🎨': 'Designer',

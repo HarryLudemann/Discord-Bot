@@ -2,7 +2,7 @@ import logging
 import psycopg2
 
 if __name__ == "__main__":
-    from bot.util.database.bank_database import Database
+    from bot.util.database import Database
     from bot.constants import POSTGRES_DATABASE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST
 
 
