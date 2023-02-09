@@ -1,8 +1,8 @@
-from discord.ext import commands
+from discord.ext.commands import Cog, command, has_permissions, MemberConverter
 import discord
 import logging
 
-class Poll(commands.Cog, name='Poll'):
+class Poll(Cog, name='Poll'):
     """Poll system allowing admin todo polls with 2-9 options"""
     def __init__(self, bot):
         self.bot = bot
@@ -81,8 +81,8 @@ class Poll(commands.Cog, name='Poll'):
             logging.info(f"{self.ctx.author} started a poll in '{self.ctx.channel}' channel")
 
 
-    @commands.command(name='poll', help='Given options and question, starts a poll', hidden=True)
-    @commands.has_permissions(administrator=True)
+    @command(name='poll', help='Given options and question, starts a poll', hidden=True)
+    @has_permissions(administrator=True)
     async def poll(self, ctx, question: str, *options: str):
         """Given options and question starts a poll, must be administrator.
 

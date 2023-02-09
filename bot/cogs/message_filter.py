@@ -1,12 +1,12 @@
-from discord.ext import commands
+from discord.ext.commands import Cog
 import logging
 
-class MessageFilter(commands.Cog, name='Message Filter'):
+class MessageFilter(Cog, name='Message Filter'):
     """Remove messages that contain profanity or websites"""
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self, message):
         def banned_words_check(text: str) -> bool:
             """Check bad-words.txt for profanity in text"""

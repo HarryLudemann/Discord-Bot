@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext.commands import Cog, command
 import discord
 import logging
 import discord
@@ -40,7 +40,7 @@ class FeedbackModal(discord.ui.Modal, title='Feedback'):
 
 
 
-class Feedback(commands.Cog, name='Feedback'):
+class Feedback(Cog, name='Feedback'):
     def __init__(self, bot):
         self.bot = bot
 
@@ -56,7 +56,7 @@ class Feedback(commands.Cog, name='Feedback'):
 
         
 
-    @commands.command(name='feedback')
+    @command(name='feedback')
     async def feedback(self, ctx):
         try:
             await ctx.message.delete()

@@ -1,13 +1,13 @@
-from discord.ext import commands
+from discord.ext.commands import Cog, command
 import logging
 from typing import Optional
 
-class Clear(commands.Cog, name='Clear'):
+class Clear(Cog, name='Clear'):
     """Clear messages in channel command"""
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="clear", aliases = ["cls"], help="Clears messages in channel, only for administrators")
+    @command(name="clear", aliases = ["cls"], help="Clears messages in channel, only for administrators")
     async def clear(self, ctx, *args):
         """Clears messages in channel, only for administrators.
 

@@ -1,14 +1,14 @@
-from discord.ext import commands
+from discord.ext.commands import Cog, command, has_permissions, MemberConverter
 import logging
 from typing import Optional
 from random import choice
 
-class Server(commands.Cog, name='Server'):
+class Server(Cog, name='Server'):
     """Basic server commands and events"""
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_member_join(self, member):
         channel = member.guild.system_channel
         if channel is not None:
@@ -18,36 +18,36 @@ class Server(commands.Cog, name='Server'):
         await member.dm_channel.send(
             f'Hi {member.name}, welcome to my Discord server!')
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_member_remove(self, member):
         channel = member.guild.system_channel
         if channel is not None:
             await channel.send(f'Goodbye {member.mention}.')
         logging.info(f'{member} left the server')
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self, message):
         if message.author != self.bot.user:
             logging.info(f'{message.author} said {message.content}')
     
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         logging.info('Bot is ready')
 
     
-    @commands.command(name='setprefix', help='Sets the bot\'s prefix', hidden=True)
+    @command(name='setprefix', help='Sets the bot\'s prefix', hidden=True)
     async def setprefix(self, ctx, prefix):
         self.bot.command_prefix = prefix
         await ctx.send("Prefixes set!")
 
-    @commands.command(description='For when you wanna settle the score some other way')
+    @command(description='For when you wanna settle the score some other way')
     async def choose(ctx, *choices: str):
         """Chooses between multiple choices."""
         await ctx.send(choice(choices))
 
-    @commands.command(name='kick', help='Kicks a member from the server', hidden=True)
-    @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: commands.MemberConverter, *, reason: Optional[str] = None):
+    @command(name='kick', help='Kicks a member from the server', hidden=True)
+    @has_permissions(kick_members=True)
+    async def kick(self, ctx, member: MemberConverter, *, reason: Optional[str] = None):
         """Kicks a member from the server, must have kick_members permission.
 
         Parameters
@@ -61,9 +61,9 @@ class Server(commands.Cog, name='Server'):
         logging.info(f'{ctx.author} kicked {member} from the server')
         await ctx.send(f'{member} was kicked from the server')
 
-    @commands.command(name='ban', help='Bans a member from the server', hidden=True)
-    @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: commands.MemberConverter, *, reason: Optional[str] = None):
+    @command(name='ban', help='Bans a member from the server', hidden=True)
+    @has_permissions(ban_members=True)
+    async def ban(self, ctx, member: MemberConverter, *, reason: Optional[str] = None):
         """Bans a member from the server, must have ban_members permission.
 
         Parameters

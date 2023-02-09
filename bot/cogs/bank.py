@@ -1,23 +1,22 @@
-from discord.ext import commands
+from discord.ext.commands import Cog, command, has_permissions, MemberConverter
 import logging
 if __name__ != '__main__':
     from bot.util.database.bank_database import BankDatabase
 
-class Bank(commands.Cog, name='Bank'):
+class Bank(Cog, name='Bank'):
     """User bank accounts"""
     def __init__(self, bot):
         self.bot = bot
         self.__database = BankDatabase()
 
-    # on user join, create account
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_member_join(self, member):
         if not self.__database.user_exists(str(member.id)):
             self.__database.create_user(str(member.id))
             logging.info(f'Created bank account for {member}')
 
-    @commands.command(name='balance', aliases = ["bal"], help='Check your balance')
-    async def bal(self, ctx, member: commands.MemberConverter = None):
+    @command(name='balance', aliases = ["bal"], help='Check your balance')
+    async def bal(self, ctx, member: MemberConverter = None):
         """Check your balance.
 
         Parameters
@@ -36,8 +35,8 @@ class Bank(commands.Cog, name='Bank'):
         await ctx.send(f'{member} has {balance} coins')
 
 
-    @commands.command(name='pay', help='Pay another user')
-    async def pay(self, ctx, member: commands.MemberConverter, amount: int):
+    @command(name='pay', help='Pay another user')
+    async def pay(self, ctx, member: MemberConverter, amount: int):
         """Pay another user.
 
         Parameters
@@ -59,7 +58,7 @@ class Bank(commands.Cog, name='Bank'):
         await ctx.send(f'You paid {member} {amount} coins')
 
 
-    @commands.command(name='register', aliases = ["reg"], hidden=True)
+    @command(name='register', aliases = ["reg"], hidden=True)
     async def register(self, ctx):
         """Manually create an account.
 
@@ -74,9 +73,9 @@ class Bank(commands.Cog, name='Bank'):
             await ctx.send(f'Account already exists for {ctx.author}')
 
     
-    @commands.command(name='setbal', hidden=True)
-    @commands.has_permissions(administrator=True)
-    async def setbal(self, ctx, member: commands.MemberConverter, amount: int):
+    @command(name='setbal', hidden=True)
+    @has_permissions(administrator=True)
+    async def setbal(self, ctx, member: MemberConverter, amount: int):
         """Set another user's balance, must have administrator permission.
 
         Parameters
