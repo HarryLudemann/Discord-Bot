@@ -7,7 +7,7 @@ class Clear(Cog, name='Clear'):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="clear", aliases = ["cls"], help="Clears messages in channel, only for administrators")
+    @command(name="clear", aliases = ["cls"], hidden=True)
     async def clear(self, ctx, *args):
         """Clears messages in channel, only for administrators.
 
@@ -27,10 +27,10 @@ class Clear(Cog, name='Clear'):
         if len(args) > 0 and (number := int_check(args[0])):
             try:
                 if len(args) == 1: # if passed number to set limit
-                    await ctx.channel.purge(limit=number)
+                    await ctx.channel.purge(limit=number+1)
                     logging.info(f"{ctx.author} cleared up to {number} messages in '{ctx.channel}' channel")
                 elif len(args) == 2: # if a third arg, remove messages with player name
-                    await ctx.channel.purge(limit=number, check=lambda m: m.author.name == args[1])
+                    await ctx.channel.purge(limit=number+1, check=lambda m: m.author.name == args[1])
                     logging.info(f"{ctx.author} cleared up to {number} messages from {args[1]} in '{ctx.channel}' channel")
             except Exception as e:
                 logging.error(e)

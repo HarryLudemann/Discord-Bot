@@ -33,7 +33,6 @@ class Server(Cog, name='Server'):
     @Cog.listener()
     async def on_ready(self):
         logging.info('Bot is ready')
-
     
     @command(name='setprefix', help='Sets the bot\'s prefix', hidden=True)
     async def setprefix(self, ctx, prefix):
@@ -41,9 +40,9 @@ class Server(Cog, name='Server'):
         await ctx.send("Prefixes set!")
 
     @command(description='For when you wanna settle the score some other way')
-    async def choose(ctx, *choices: str):
+    async def choose(self, ctx, *choices: list):
         """Chooses between multiple choices."""
-        await ctx.send(choice(choices))
+        await ctx.send('I choose {}'.format(''.join(choice(choices))))
 
     @command(name='kick', help='Kicks a member from the server', hidden=True)
     @has_permissions(kick_members=True)

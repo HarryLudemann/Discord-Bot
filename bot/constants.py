@@ -1,15 +1,3 @@
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-POSTGRES_DATABASE = os.getenv('POSTGRES_DATABASE')
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-
 PREFIX = '#'
 
 REACTION_ROLE_CHANNEL_ID = 1071669604809711636

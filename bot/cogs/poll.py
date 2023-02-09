@@ -60,7 +60,7 @@ class Poll(Cog, name='Poll'):
             for custom_id in self.votes:
                 self.results[custom_id] += len(self.votes[custom_id])
             # create string to return
-            results = f"Results for poll '{self.question}'\n"
+            results = ""
             for i, option in enumerate(self.options):
                 # be careful of zero division error
                 if self.total_votes == 0:

@@ -1,24 +1,25 @@
 import logging 
 import psycopg2
+import os
+from dotenv import load_dotenv
 
 if __name__ == "__main__":
     from bot.util.database import Database
-    from bot.constants import POSTGRES_DATABASE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST
-
 
 class Database:
-    CHECK_USER_QUERY = lambda user_id: f"SELECT * FROM users WHERE id = {user_id}"
-    GET_BALANCE_QUERY = lambda user_id: f"SELECT balance FROM users WHERE id = {user_id}"
-    CREATE_USER_QUERY = lambda user_id: f"INSERT INTO users (id, balance) VALUES ({user_id}, 0)"
+    CHECK_USER_QUERY = lambda _, user_id: f"SELECT * FROM users WHERE id = {user_id}"
+    GET_BALANCE_QUERY = lambda _, user_id: f"SELECT balance FROM users WHERE id = {user_id}"
+    CREATE_USER_QUERY = lambda _, user_id: f"INSERT INTO users (id, balance) VALUES ({user_id}, 0)"
 
     def connect(self):
         """ Connect to local MySQL database, check db exits"""
         try:
+            load_dotenv()
             conn = psycopg2.connect(
-                host=POSTGRES_HOST,
-                database=POSTGRES_DATABASE,
-                user=POSTGRES_USER,
-                password=POSTGRES_PASSWORD
+                host=os.getenv('POSTGRES_HOST'),
+                database=os.getenv('POSTGRES_DATABASE'),
+                user=os.getenv('POSTGRES_USER'),
+                password=os.getenv('POSTGRES_PASSWORD')
             )
             # create user table if doesn't exists
             query = """CREATE TABLE IF NOT EXISTS users (
@@ -29,6 +30,10 @@ class Database:
             cursor.execute(query)
             conn.commit()
             cursor.close()
+            if conn is not None:
+                logging.info('Connected to database')
+            else:
+                logging.error('Failed to connect to database')
             return conn
         except Exception as e:
             logging.error(e)
@@ -56,8 +61,10 @@ class Database:
 class BankDatabase(Database):
     def pay_user(self, sender_id: str, recipient_id: str, amount: str, conn = None) -> bool:
         """Pay user, return True if successful, False if not"""
+        conn = self.connect()
         if conn is None:
-            conn = self.connect()
+            logging.error("Failed to connect to database to pay user")
+            return None
         cursor = conn.cursor()
         try:
             cursor.execute(self.CHECK_USER_QUERY(sender_id))
@@ -85,8 +92,10 @@ class BankDatabase(Database):
 
     def set_user_balance(self, user_id: str, amount: str, conn = None) -> bool:
         """Set user balance, return True if successful, False if not"""
+        conn = self.connect()
         if conn is None:
-            conn = self.connect()
+            logging.error("Failed to connect to database to set user balance")
+            return None
         cursor = conn.cursor()
         try:
             cursor.execute(self.CHECK_USER_QUERY(user_id))
@@ -103,9 +112,11 @@ class BankDatabase(Database):
             cursor.close()
             conn.close()
 
-    def get_user_balance(self, user_id: str, conn = None) -> int:
+    def get_user_balance(self, user_id: str) -> int:
+        conn = self.connect()
         if conn is None:
-            conn = self.connect()
+            logging.error("Failed to connect to database to get user balance")
+            return None
         cursor = conn.cursor()
         try:
             cursor.execute(self.CHECK_USER_QUERY(user_id))
