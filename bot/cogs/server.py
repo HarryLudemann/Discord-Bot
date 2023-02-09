@@ -1,6 +1,7 @@
 from discord.ext import commands
 import logging
 from typing import Optional
+from random import choice
 
 class Server(commands.Cog, name='Server'):
     """Basic server commands and events"""
@@ -33,7 +34,18 @@ class Server(commands.Cog, name='Server'):
     async def on_ready(self):
         logging.info('Bot is ready')
 
-    @commands.command(name='kick', help='Kicks a member from the server')
+    
+    @commands.command(name='setprefix', help='Sets the bot\'s prefix', hidden=True)
+    async def setprefix(self, ctx, prefix):
+        self.bot.command_prefix = prefix
+        await ctx.send("Prefixes set!")
+
+    @commands.command(description='For when you wanna settle the score some other way')
+    async def choose(ctx, *choices: str):
+        """Chooses between multiple choices."""
+        await ctx.send(choice(choices))
+
+    @commands.command(name='kick', help='Kicks a member from the server', hidden=True)
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: commands.MemberConverter, *, reason: Optional[str] = None):
         """Kicks a member from the server, must have kick_members permission.
@@ -49,7 +61,7 @@ class Server(commands.Cog, name='Server'):
         logging.info(f'{ctx.author} kicked {member} from the server')
         await ctx.send(f'{member} was kicked from the server')
 
-    @commands.command(name='ban', help='Bans a member from the server')
+    @commands.command(name='ban', help='Bans a member from the server', hidden=True)
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: commands.MemberConverter, *, reason: Optional[str] = None):
         """Bans a member from the server, must have ban_members permission.
@@ -64,7 +76,6 @@ class Server(commands.Cog, name='Server'):
         await member.ban(reason=reason)
         logging.info(f'{ctx.author} banned {member} from the server')
         await ctx.send(f'{member} was banned from the server')
-    
 
 async def setup(bot):
     await bot.add_cog(Server(bot))

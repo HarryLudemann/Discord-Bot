@@ -1,5 +1,7 @@
-#Setup
-## Creating docker image
+# Discord-Python
+
+## Setup
+### Creating docker image
 install the postgres alpine version from docker, then create image:
 ```
 docker run --name discord-py-postgres -e POSTGRES_USER=username -e POSTGRES_PASSWORD=pw -d -p 5432:5432 postgres:alpine

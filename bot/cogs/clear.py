@@ -7,8 +7,7 @@ class Clear(commands.Cog, name='Clear'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
+    @commands.command(name="clear", aliases = ["cls"], help="Clears messages in channel, only for administrators")
     async def clear(self, ctx, *args):
         """Clears messages in channel, only for administrators.
 

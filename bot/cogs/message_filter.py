@@ -10,7 +10,7 @@ class MessageFilter(commands.Cog, name='Message Filter'):
     async def on_message(self, message):
         def banned_words_check(text: str) -> bool:
             """Check bad-words.txt for profanity in text"""
-            with open('banned-words.txt', 'r') as f:
+            with open('data/banned-words.txt', 'r') as f:
                 banned_words = f.read().splitlines()
             words = text.split()
             for word in words:
@@ -20,7 +20,7 @@ class MessageFilter(commands.Cog, name='Message Filter'):
         
         def banned_sub_words_check(text: str) -> bool:
             """Check website-identifies.txt for features in text"""
-            with open('banned-sub-words.txt', 'r') as f:
+            with open('data/banned-sub-words.txt', 'r') as f:
                 banned_sub_words = f.read().splitlines()
             for identifier in banned_sub_words:
                 if identifier in text:

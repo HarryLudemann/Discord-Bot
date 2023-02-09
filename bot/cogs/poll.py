@@ -10,7 +10,7 @@ class Poll(commands.Cog, name='Poll'):
     # create poll view that accepts question and options, asks user to select one option and then submits results
     class Poll(discord.ui.View):
         def __init__(self, question: str, options: str):
-            super().__init__(timeout=60.0)
+            super().__init__(timeout=None)
             self.question = question
             self.options = options
             self.message = None
@@ -81,7 +81,7 @@ class Poll(commands.Cog, name='Poll'):
             logging.info(f"{self.ctx.author} started a poll in '{self.ctx.channel}' channel")
 
 
-    @commands.command(name='poll', help='Given options and question, starts a poll')
+    @commands.command(name='poll', help='Given options and question, starts a poll', hidden=True)
     @commands.has_permissions(administrator=True)
     async def poll(self, ctx, question: str, *options: str):
         """Given options and question starts a poll, must be administrator.

@@ -16,26 +16,7 @@ class Bank(commands.Cog, name='Bank'):
             self.__database.create_user(str(member.id))
             logging.info(f'Created bank account for {member}')
 
-    def pay_user(self, from_id: str, to_id: str, amount: str) -> bool:
-        """Pay another user.
-
-        Parameters
-        ----------
-        from_id : str
-            ID of user paying
-        to_id : str
-            ID of user receiving payment
-        amount : str
-            Amount to pay
-
-        Returns
-        -------
-        bool
-            True if payment was successful, False otherwise
-        """
-        self.__database.pay_user(from_id, to_id, amount)
-
-    @commands.command(name='bal', help='Check your balance')
+    @commands.command(name='balance', aliases = ["bal"], help='Check your balance')
     async def bal(self, ctx, member: commands.MemberConverter = None):
         """Check your balance.
 
@@ -78,7 +59,7 @@ class Bank(commands.Cog, name='Bank'):
         await ctx.send(f'You paid {member} {amount} coins')
 
 
-    @commands.command(name='register', help='Create an account')
+    @commands.command(name='register', aliases = ["reg"], hidden=True)
     async def register(self, ctx):
         """Manually create an account.
 
@@ -93,7 +74,7 @@ class Bank(commands.Cog, name='Bank'):
             await ctx.send(f'Account already exists for {ctx.author}')
 
     
-    @commands.command(name='setbal', help='Set your balance, admin only')
+    @commands.command(name='setbal', hidden=True)
     @commands.has_permissions(administrator=True)
     async def setbal(self, ctx, member: commands.MemberConverter, amount: int):
         """Set another user's balance, must have administrator permission.
