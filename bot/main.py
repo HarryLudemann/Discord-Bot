@@ -3,13 +3,11 @@ from discord.ext.commands import Bot, when_mentioned_or
 import os
 import logging
 from dotenv import load_dotenv
-if __name__ != '__main__':
-    from bot.constants import PREFIX
 
 class Bot(Bot):
     def __init__(self) -> None:
         super().__init__(
-            command_prefix=when_mentioned_or(PREFIX), 
+            command_prefix=when_mentioned_or('#'), 
             intents=discord.Intents.all(),
             case_insensitive=True)
         discord.utils.setup_logging(level=logging.INFO)

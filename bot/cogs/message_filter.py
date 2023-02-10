@@ -4,16 +4,6 @@ import discord
 if __name__ != '__main__':
     from bot.database import BannedWordsDatabase
 
-def list_to_string(list: list, line_addition='', uppercase_first=False) -> str:
-    """Convert a list to a string"""
-    string = ''
-    for item in list:
-        if uppercase_first:
-            string += f'{item[0].upper()}{item[1:]}{line_addition}'
-        else:
-            string += f'{item}{line_addition}'
-    return string
-
 class MessageFilter(Cog, name='Message Filter'):
     """Remove messages that contain profanity or websites"""
     def __init__(self, bot):
@@ -42,7 +32,8 @@ class MessageFilter(Cog, name='Message Filter'):
     async def list_banned_words(self, ctx):
         await ctx.send(embed=discord.Embed(
                 title='Banned Words', 
-                description=list_to_string(self.__database.get_words(ctx.guild.id), '\n', True)))
+                description=self.__database.list_to_string(
+                    self.__database.get_words(ctx.guild.id), '\n', True)))
 
 
 async def setup(bot):

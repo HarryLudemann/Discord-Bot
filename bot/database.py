@@ -11,6 +11,16 @@ class Database:
     GET_BALANCE_QUERY = lambda _, user_id, guild_id: f"SELECT balance FROM users WHERE user_id = {user_id} AND guild_id = {guild_id}"
     CREATE_USER_QUERY = lambda _, user_id, guild_id: f"INSERT INTO users (user_id, guild_id, balance) VALUES ({user_id}, {guild_id}, 0)"
 
+    def list_to_string(list: list, line_addition='', uppercase_first=False) -> str:
+        """Convert a list to a string"""
+        string = ''
+        for item in list:
+            if uppercase_first:
+                string += f'{item[0].upper()}{item[1:]}{line_addition}'
+            else:
+                string += f'{item}{line_addition}'
+        return string
+
     def connect(self):
         """ Connect to local MySQL database, check db exits"""
         try:
@@ -21,21 +31,30 @@ class Database:
                 user=os.getenv('POSTGRES_USER'),
                 password=os.getenv('POSTGRES_PASSWORD')
             )
-            # create user table if doesn't exists
+            # user table with balance and user id
             user_table_query = """CREATE TABLE IF NOT EXISTS users (
                 guild_id bigserial PRIMARY KEY,
                 user_id bigserial,
                 balance INTEGER
             )"""
-            #create banned words table if doesn't exists, random id and guild_id and word 
+            # banned words table with random id and guild_id and word 
             banned_word_table_query = """CREATE TABLE IF NOT EXISTS banned_words (
                 id bigserial PRIMARY KEY,
                 guild_id bigserial,
                 word VARCHAR(255)
             )"""
+            # reaction roles table with guild_id , channel_id , role_id, and emoji
+            reaction_roles_table_query = """CREATE TABLE IF NOT EXISTS reaction_roles (
+                id bigserial PRIMARY KEY,
+                guild_id bigserial,
+                channel_id bigserial,
+                role_id bigserial,
+                emoji VARCHAR(255)
+            )"""
             cursor = conn.cursor()
             cursor.execute(user_table_query)
             cursor.execute(banned_word_table_query)
+            cursor.execute(reaction_roles_table_query)
             conn.commit()
             cursor.close()
             if conn is not None:
@@ -219,3 +238,71 @@ class BannedWordsDatabase(Database):
         finally:
             cursor.close()
             conn.close()
+
+
+class ReactionRoleDatabase(Database):
+
+    def add_reaction_role(self, guild_id: str, channel_id: str, role_id: str, emoji: str) -> bool:
+        """Add reaction role to reaction_roles table, return True if successful, False if not"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"INSERT INTO reaction_roles (guild_id, channel_id, role_id, emoji) VALUES ({guild_id}, {channel_id}, {role_id}, '{emoji}')")
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(e)
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    def remove_reaction_role(self, guild_id: str, channel_id: str, role_id: str, emoji: str) -> bool:
+        """Remove reaction role from reaction_roles table, return True if successful, False if not"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"DELETE FROM reaction_roles WHERE guild_id = {guild_id} AND channel_id = {channel_id} AND role_id = {role_id} AND emoji = '{emoji}'")
+            conn.commit()
+            return True
+        except Exception as e:
+            logging.error(e)
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_reaction_roles(self, guild_id: str) -> list:
+        """Get all reaction roles from reaction_roles table, return list of reaction roles"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"SELECT role_id, emoji FROM reaction_roles WHERE guild_id = {guild_id}")
+            reaction_roles = cursor.fetchall()
+            return reaction_roles
+        except Exception as e:
+            logging.error(e)
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def check_reaction_role(self, guild_id: str, channel_id: str, emoji: str) -> str:
+        """Check if reaction role exists, return role_id if successful, None if not"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"SELECT role_id FROM reaction_roles WHERE guild_id = {guild_id} AND channel_id = {channel_id} AND emoji = '{emoji}'")
+            role_id = cursor.fetchone()
+            if role_id is None:
+                return None
+            return role_id[0]
+        except Exception as e:
+            logging.error(e)
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+
+
