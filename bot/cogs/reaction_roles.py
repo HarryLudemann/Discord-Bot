@@ -3,7 +3,7 @@ import logging
 from discord.utils import get
 import discord
 if __name__ != '__main__':
-    from bot.constants import REACTION_ROLE_CHANNEL_ID, EXTRA_ROLES, RULES_CHANNEL_ID, ROLES
+    from bot.constants import EXTRA_ROLES, ROLES
 
 
 def react_role_embed() -> discord.Embed:
@@ -23,8 +23,8 @@ def react_role_embed() -> discord.Embed:
 
 async def is_appropriate_channel(ctx: discord.ext.commands.Context) -> bool:
     """Check if the channel is the react or rule channel"""
-    if ctx.channel.id == REACTION_ROLE_CHANNEL_ID: return True
-    elif ctx.channel.id == RULES_CHANNEL_ID: return True
+    if ctx.channel.id == 1071669604809711636: return True
+    elif ctx.channel.id == 1071669604809711636: return True
     return False
 
 class ReactionRoles(Cog, name='Reaction Roles'):
@@ -32,14 +32,14 @@ class ReactionRoles(Cog, name='Reaction Roles'):
     def __init__(self, bot):
         self.bot = bot
 
-    # @Cog.listener()
-    # async def on_ready(self):
-    #     """Reset react role message"""
-    #     channel = self.bot.get_channel(REACTION_ROLE_CHANNEL_ID)
-    #     await channel.purge()
-    #     message = await channel.send(embed= react_role_embed())
-    #     for emoji in EXTRA_ROLES.keys():
-    #         await message.add_reaction(emoji)
+    @Cog.listener()
+    async def on_ready(self):
+        """Reset react role message"""
+        channel = self.bot.get_channel(1071669604809711636)
+        await channel.purge()
+        message = await channel.send(embed= react_role_embed())
+        for emoji in EXTRA_ROLES.keys():
+            await message.add_reaction(emoji)
     
     @Cog.listener()
     @check(is_appropriate_channel)

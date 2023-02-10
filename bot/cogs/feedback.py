@@ -39,13 +39,13 @@ class Feedback(Cog, name='Feedback'):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name='feedback')
+    @command(name='feedback', aliases=['fb'], help='Send feedback to the server owner')
     async def feedback(self, ctx):
         try:
             await ctx.message.delete()
         except Exception as e:
             logging.error(e)
-        await ctx.send('Please provide feedback', view=self.FeedbackView(ctx))
+        await ctx.send('Please provide feedback', view=FeedbackView(ctx))
 
 
 async def setup(bot):

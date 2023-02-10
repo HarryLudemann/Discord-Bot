@@ -34,7 +34,7 @@ class Bank(Cog, name='Bank'):
             return
         await ctx.send(f'{member} has {balance} coins')
 
-    @command(name='pay', help='Pay another user')
+    @command(name='pay', aliases = ["give"], help='Pay another user')
     async def pay(self, ctx, member: MemberConverter, amount: int):
         """Pay another user.
 
