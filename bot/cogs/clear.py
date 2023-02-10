@@ -2,6 +2,13 @@ from discord.ext.commands import Cog, command
 import logging
 from typing import Optional
 
+def int_check(number: str) -> Optional[int]:
+    """Check if number is a valid integer, returned number but can be None"""
+    try:
+        return int(number)
+    except ValueError:
+        return None
+    
 class Clear(Cog, name='Clear'):
     """Clear messages in channel command"""
     def __init__(self, bot):
@@ -17,14 +24,7 @@ class Clear(Cog, name='Clear'):
             Optionally give number to set max number of messages to delete, 
             and optionally a player name as a 3rd argument to delete messages from
         """
-        def int_check(number: str) -> Optional[int]:
-            """Check if number is a valid integer, returned number but can be None"""
-            try:
-                return int(number)
-            except ValueError:
-                return None
-        
-        if len(args) > 0 and (number := int_check(args[0])):
+        if len(args) > 0 and (number := int_check(args[0])): # if arg and first is valid int
             try:
                 if len(args) == 1: # if passed number to set limit
                     await ctx.channel.purge(limit=number+1)

@@ -9,6 +9,10 @@ class Server(Cog, name='Server'):
         self.bot = bot
 
     @Cog.listener()
+    async def on_ready(self):
+        logging.info('Bot is ready')
+        
+    @Cog.listener()
     async def on_member_join(self, member):
         channel = member.guild.system_channel
         if channel is not None:
@@ -19,20 +23,9 @@ class Server(Cog, name='Server'):
             f'Hi {member.name}, welcome to my Discord server!')
 
     @Cog.listener()
-    async def on_member_remove(self, member):
-        channel = member.guild.system_channel
-        if channel is not None:
-            await channel.send(f'Goodbye {member.mention}.')
-        logging.info(f'{member} left the server')
-
-    @Cog.listener()
     async def on_message(self, message):
         if message.author != self.bot.user:
             logging.info(f'{message.author} said {message.content}')
-    
-    @Cog.listener()
-    async def on_ready(self):
-        logging.info('Bot is ready')
     
     @command(name='setprefix', help='Sets the bot\'s prefix', hidden=True)
     async def setprefix(self, ctx, prefix):

@@ -1,9 +1,31 @@
-from discord.ext.commands import Cog
+from discord.ext.commands import Cog, check
 import logging
 from discord.utils import get
-
+import discord
 if __name__ != '__main__':
-    from bot.constants import REACTION_ROLE_CHANNEL_ID, ROLES
+    from bot.constants import REACTION_ROLE_CHANNEL_ID, EXTRA_ROLES, RULES_CHANNEL_ID, ROLES
+
+
+def react_role_embed() -> discord.Embed:
+    """Returns embed of formatted reaction roles"""
+    embed = discord.Embed(
+        title="Reaction Roles",
+        description="React to this message to get a role",
+        colour=discord.Colour.blue()
+    )
+    embed.set_footer(text="React to this message to get a role")
+    text= ""
+    for role in EXTRA_ROLES.keys():
+        if role != 'Verified':
+            text += f"{role} {EXTRA_ROLES[role]}\n"
+    embed.add_field(name="Roles", value=text, inline=False)
+    return embed
+
+async def is_appropriate_channel(ctx: discord.ext.commands.Context) -> bool:
+    """Check if the channel is the react or rule channel"""
+    if ctx.channel.id == REACTION_ROLE_CHANNEL_ID: return True
+    elif ctx.channel.id == RULES_CHANNEL_ID: return True
+    return False
 
 class ReactionRoles(Cog, name='Reaction Roles'):
     """Manages the addition and removal of reaction roles"""
@@ -12,29 +34,18 @@ class ReactionRoles(Cog, name='Reaction Roles'):
 
     # @Cog.listener()
     # async def on_ready(self):
-    #     """Add message and reactions to react role channel on bot startup"""
-    #     async def add_reaction_roles(bot) -> None:
-    #         channel = bot.get_channel(REACTION_ROLE_CHANNEL_ID)
-    #         await channel.purge() # clear channel
-    #         text= "Reaction Roles:\n\n"
-    #         for role in ROLES.keys():
-    #             text += f"{role}: {ROLES[role]}\n"
-    #         message = await channel.send(text)
-    #         for emoji in ROLES.keys():
-    #             await message.add_reaction(emoji)
-
-    #     await add_reaction_roles(self.bot)
-
+    #     """Reset react role message"""
+    #     channel = self.bot.get_channel(REACTION_ROLE_CHANNEL_ID)
+    #     await channel.purge()
+    #     message = await channel.send(embed= react_role_embed())
+    #     for emoji in EXTRA_ROLES.keys():
+    #         await message.add_reaction(emoji)
+    
     @Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        """When a reaction is added to a message in the react role channel, add role to user"""
-        # if message not within react role chat or use is bot return
-        channel = self.bot.get_channel(REACTION_ROLE_CHANNEL_ID)
-        if reaction.message.channel.id != channel.id:
-            return
-        if user.bot:
-            return
-        # check if emoji is in roles, if so add role
+    @check(is_appropriate_channel)
+    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+        """Add role when reaction added"""
+        if user.bot: return
         if reaction.emoji in ROLES.keys():
             logging.info(f'{user} reacted to {ROLES[reaction.emoji]} role')
             role = get(user.guild.roles, name=ROLES[reaction.emoji])
@@ -46,12 +57,10 @@ class ReactionRoles(Cog, name='Reaction Roles'):
                 exit()
 
     @Cog.listener()
-    async def on_reaction_remove(self, reaction, user):
-        """When a reaction is removed from a message in the react role channel, remove role from user"""
-        channel = self.bot.get_channel(REACTION_ROLE_CHANNEL_ID)
-        if reaction.message.channel.id != channel.id:
-            return
-        # check if emoji is in roles, if so add role
+    @check(is_appropriate_channel)
+    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
+        """Remove role if reaction removed"""
+        if user.bot: return
         if reaction.emoji in ROLES.keys():
             logging.info(f'{user} removed reaction to {ROLES[reaction.emoji]} role')
             role = get(user.guild.roles, name=ROLES[reaction.emoji])

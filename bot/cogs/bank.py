@@ -34,7 +34,6 @@ class Bank(Cog, name='Bank'):
             return
         await ctx.send(f'{member} has {balance} coins')
 
-
     @command(name='pay', help='Pay another user')
     async def pay(self, ctx, member: MemberConverter, amount: int):
         """Pay another user.
@@ -57,7 +56,6 @@ class Bank(Cog, name='Bank'):
         self.__database.pay_user(str(ctx.author.id), str(member.id), amount)
         await ctx.send(f'You paid {member} {amount} coins')
 
-
     @command(name='register', aliases = ["reg"], hidden=True)
     async def register(self, ctx):
         """Manually create an account.
@@ -71,7 +69,6 @@ class Bank(Cog, name='Bank'):
             await ctx.send(f'Account created for {ctx.author}')
         else:
             await ctx.send(f'Account already exists for {ctx.author}')
-
     
     @command(name='setbal', hidden=True)
     @has_permissions(administrator=True)
