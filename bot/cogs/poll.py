@@ -72,9 +72,6 @@ class Poll(Cog, name='Poll'):
             # create results dict
             for i, _ in enumerate(self.options):
                 self.results[str(i)] = 0
-            # send message
-            # self.message = await self.ctx.channel.send(self.question, view=self)
-            # send results message
             self.results_message = await self.ctx.channel.send(embed=self.get_results(), view=self)
             logging.info(f"{self.ctx.author} started a poll in '{self.ctx.channel}' channel")
 
@@ -91,7 +88,6 @@ class Poll(Cog, name='Poll'):
         options : *str
             Options to choose from
         """
-        # try delete the message containing the command
         try:
             await ctx.message.delete()
         except Exception as e:
