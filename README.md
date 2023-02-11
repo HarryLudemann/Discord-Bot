@@ -1,4 +1,4 @@
-# Discord Bot
+# Ki Discord Bot
 
 ## Local Setup
 Locally running the bot is possible, so long as .env are set, requirements are installed and a postgres server running and accessible.
