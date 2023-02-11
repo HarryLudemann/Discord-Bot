@@ -51,10 +51,17 @@ class Database:
                 role_id bigserial,
                 emoji VARCHAR(255)
             )"""
+            # prefix table with guild_id and prefix
+            prefix_table_query = """CREATE TABLE IF NOT EXISTS prefixes (
+                id bigserial PRIMARY KEY,
+                guild_id bigserial,
+                prefix VARCHAR(255)
+            )"""
             cursor = conn.cursor()
             cursor.execute(user_table_query)
             cursor.execute(banned_word_table_query)
             cursor.execute(reaction_roles_table_query)
+            cursor.execute(prefix_table_query)
             conn.commit()
             cursor.close()
             if conn is not None:
@@ -77,6 +84,69 @@ class Database:
                 conn.commit()
                 return True
             return False
+        except Exception as e:
+            logging.error(e)
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+
+class PrefixDatabase(Database):
+    CHECK_PREFIX_QUERY = lambda _, guild_id: f"SELECT * FROM prefixes WHERE guild_id = {guild_id}"
+    
+    def create_def_prefix(self, guild_id: str) -> bool:
+        """Create default prefix if not exists, return True if created, False if already exists"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(self.CHECK_PREFIX_QUERY(guild_id))
+            if cursor.fetchone() is None:
+                cursor.execute(f"INSERT INTO prefixes (guild_id, prefix) VALUES ({guild_id}, '#')")
+                conn.commit()
+                return True
+            return False
+        except Exception as e:
+            logging.error(e)
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    async def get_prefix(self, guild_id: str) -> str:
+        """Get prefix, return None if not found"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            # check if prefix exists
+            cursor.execute(f"SELECT * FROM prefixes WHERE guild_id = {guild_id}")
+            if cursor.fetchone() is None:
+                self.create_def_prefix(guild_id)
+                return '#'
+            cursor.execute(f"SELECT prefix FROM prefixes WHERE guild_id = {guild_id}")
+            prefix = cursor.fetchone()
+            if prefix is None:
+                return None
+            return prefix[0]
+        except Exception as e:
+            logging.error(e)
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def set_prefix(self, guild_id: str, prefix: str) -> bool:
+        """Set prefix, return True if successful, False if not"""
+        conn = self.connect()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"SELECT * FROM prefixes WHERE guild_id = {guild_id}")
+            if cursor.fetchone() is None:
+                cursor.execute(f"INSERT INTO prefixes (guild_id, prefix) VALUES ({guild_id}, '{prefix}')")
+            else:
+                cursor.execute(f"UPDATE prefixes SET prefix = '{prefix}' WHERE guild_id = {guild_id}")
+            conn.commit()
+            return True
         except Exception as e:
             logging.error(e)
             return False

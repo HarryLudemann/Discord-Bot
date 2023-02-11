@@ -1,19 +1,21 @@
 from discord.ext.commands import Cog, command, has_permissions, MemberConverter
-import discord
 import logging
 from typing import Optional
 from random import choice
+if __name__ != '__main__':
+    from bot.database import PrefixDatabase
 
 
 class Server(Cog, name='Server'):
     """Basic server commands and events"""
     def __init__(self, bot):
         self.bot = bot
+        self.__database = PrefixDatabase()
 
     @Cog.listener()
     async def on_ready(self):
         logging.info('Bot is ready')
-        
+
     @Cog.listener()
     async def on_member_join(self, member):
         channel = member.guild.system_channel
@@ -28,6 +30,12 @@ class Server(Cog, name='Server'):
     async def on_message(self, message):
         if message.author != self.bot.user:
             logging.info(f'{message.author} said {message.content}')
+
+    @command(name='setprefix', help='Set the prefix for the current guild')
+    @has_permissions(administrator=True)
+    async def setprefix(self, ctx, prefix: str):
+        self.__database.set_prefix(ctx.guild.id, prefix)
+        await ctx.send(f'Prefix set to {prefix}')
 
     @command(description='For when you wanna settle the score some other way')
     async def choose(self, ctx, *choices: list):

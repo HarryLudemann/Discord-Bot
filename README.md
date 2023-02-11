@@ -1,4 +1,4 @@
-# DiscordBot
+# Discord Bot
 
 ## Local Setup
 Locally running the bot is possible, so long as .env are set, requirements are installed and a postgres server running and accessible.
@@ -6,7 +6,7 @@ Locally running the bot is possible, so long as .env are set, requirements are i
 Clone the repository and move into the cloned folder.
 ```
 git clone https://github.com/HarryLudemann/Discord-Python
-cd DiscordBot
+cd KyraDiscordBot
 ```
 ### 2. Create .env File
 Create .env file in folder to store environment variables, set the following variables.
@@ -30,14 +30,14 @@ python start.py
 ### 1. Start Postgres Server
 Install the postgres alpine version from docker hub, then run the following command.
 ```
-docker run --name discord-py-postgres -e POSTGRES_USER=username -e POSTGRES_PASSWORD=pw -d -p 5432:5432 postgres:alpine
+docker run --name postgres -e POSTGRES_USER=username -e POSTGRES_PASSWORD=pw -d -p 5432:5432 postgres:alpine
 ```
 
 ### 2. Clone Repository
 Clone the repository and move into the cloned folder.
 ```
 git clone https://github.com/HarryLudemann/Discord-Python
-cd DiscordBot
+cd KyraDiscordBot
 ```
 ### 3. Create .env File
 Create .env file in folder to store environment variables, set the following.
