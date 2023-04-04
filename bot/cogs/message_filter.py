@@ -4,6 +4,7 @@ import discord
 if __name__ != '__main__':
     from bot.database import BannedWordsDatabase
 
+
 class MessageFilter(Cog, name='Message Filter'):
     """Remove messages that contain profanity or websites"""
     def __init__(self, bot):
@@ -16,8 +17,9 @@ class MessageFilter(Cog, name='Message Filter'):
             return
         if self.__database.check_message(message.guild.id, message.content):
             await message.delete()
-            logging.warning(f'{message.author} said banned content {message.content}')
-    
+            logging.warning(
+                f'{message.author} said banned content {message.content}')
+
     @command(name='addbannedword', hidden=True)
     async def add_banned_word(self, ctx, word: str):
         self.__database.add_word(ctx.guild.id, word)
@@ -31,7 +33,7 @@ class MessageFilter(Cog, name='Message Filter'):
     @command(name='listbannedwords', aliases=['bannedwordslist'], hidden=True)
     async def list_banned_words(self, ctx):
         await ctx.send(embed=discord.Embed(
-                title='Banned Words', 
+                title='Banned Words',
                 description=self.__database.list_to_string(
                     self.__database.get_words(ctx.guild.id), '\n', True)))
 

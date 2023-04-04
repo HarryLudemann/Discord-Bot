@@ -1,7 +1,7 @@
 from discord.ext.commands import Cog, command
 import discord
 import logging
-import discord
+
 
 class FeedbackModal(discord.ui.Modal, title='Feedback'):
     """Modal containing the feedback questions"""
@@ -19,10 +19,14 @@ class FeedbackModal(discord.ui.Modal, title='Feedback'):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
+        await interaction.response.send_message(
+            f'Thanks for your feedback, {self.name.value}!', ephemeral=True)
 
-    async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-        await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
+    async def on_error(
+            self, interaction: discord.Interaction, error: Exception) -> None:
+        await interaction.response.send_message(
+            'Oops! Something went wrong.', ephemeral=True)
+
 
 class FeedbackView(discord.ui.View):
     """View with button to send feedback modal"""
@@ -30,16 +34,21 @@ class FeedbackView(discord.ui.View):
         super().__init__(timeout=None)
         self.ctx = ctx
 
-    @discord.ui.button(label='Send Feedback', style=discord.ButtonStyle.blurple)
-    async def send_feedback(self, button: discord.ui.Button, interaction: discord.Interaction):
+    @discord.ui.button(
+            label='Send Feedback', style=discord.ButtonStyle.blurple)
+    async def send_feedback(
+            self, button: discord.ui.Button, interaction: discord.Interaction):
         await button.response.send_modal(FeedbackModal())
+
 
 class Feedback(Cog, name='Feedback'):
     """Feedback system allowing users to provide feedback"""
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name='feedback', aliases=['fb'], help='Send feedback to the server owner')
+    @command(
+        name='feedback',
+        aliases=['fb'], help='Send feedback to the server owner')
     async def feedback(self, ctx):
         try:
             await ctx.message.delete()

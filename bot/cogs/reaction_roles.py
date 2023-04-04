@@ -1,9 +1,10 @@
-from discord.ext.commands import Cog, check, command
+from discord.ext.commands import Cog, command
 import logging
 from discord.utils import get
 import discord
 if __name__ != '__main__':
     from bot.database import ReactionRoleDatabase
+
 
 class ReactionRoles(Cog, name='Reaction Roles'):
     """Manages the addition and removal of reaction roles"""
@@ -13,10 +14,11 @@ class ReactionRoles(Cog, name='Reaction Roles'):
 
     async def reaction_check(self, guild_id, channel_id, emoji, user):
         """Add role when reaction added"""
-        if user.bot: return
+        if user.bot:
+            return
         role_id = self.__database.check_reaction_role(
-            guild_id=str(guild_id), 
-            channel_id=str(channel_id), 
+            guild_id=str(guild_id),
+            channel_id=str(channel_id),
             emoji=str(emoji))
         logging.info(f'Role ID: {role_id}')
         if role_id is not None:
@@ -27,10 +29,11 @@ class ReactionRoles(Cog, name='Reaction Roles'):
 
     async def reaction_remove_check(self, guild_id, channel_id, emoji, user):
         """Remove role when reaction removed"""
-        if user.bot: return
+        if user.bot:
+            return
         role_id = self.__database.check_reaction_role(
-            guild_id=str(guild_id), 
-            channel_id=str(channel_id), 
+            guild_id=str(guild_id),
+            channel_id=str(channel_id),
             emoji=str(emoji))
         if role_id is not None:
             role = get(self.bot.get_guild(guild_id).roles, id=int(role_id))
@@ -39,37 +42,45 @@ class ReactionRoles(Cog, name='Reaction Roles'):
             logging.info(f'Removed role {role.name} from {user.name}')
 
     @Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        """On reaction add check if reaction is a reaction role and in correct channel, if so add"""
+    async def on_reaction_add(
+            self, reaction: discord.Reaction, user: discord.User):
+        """On reaction add check if reaction is a reaction role
+            and in correct channel, if so add"""
         await self.reaction_check(
-            reaction.message.guild.id, 
-            reaction.message.channel.id, 
+            reaction.message.guild.id,
+            reaction.message.channel.id,
             reaction.emoji, user)
 
     @Cog.listener()
-    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        """On raw reaction add check if reaction is a reaction role and in correct channel, if so add"""
+    async def on_raw_reaction_add(
+            self, payload: discord.RawReactionActionEvent):
+        """On raw reaction add check if reaction is a reaction
+            role and in correct channel, if so add"""
         await self.reaction_check(
-            payload.guild_id, 
-            payload.channel_id, 
-            payload.emoji, 
+            payload.guild_id,
+            payload.channel_id,
+            payload.emoji,
             self.bot.get_user(payload.user_id))
 
     @Cog.listener()
-    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
-        """On reaction remove check if reaction is a reaction role and in correct channel, if so remove"""
+    async def on_reaction_remove(
+            self, reaction: discord.Reaction, user: discord.User):
+        """On reaction remove check if reaction is a reaction
+            role and in correct channel, if so remove"""
         await self.reaction_remove_check(
-            reaction.message.guild.id, 
-            reaction.message.channel.id, 
+            reaction.message.guild.id,
+            reaction.message.channel.id,
             reaction.emoji, user)
-        
+
     @Cog.listener()
-    async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
-        """On raw reaction remove check if reaction is a reaction role and in correct channel, if so remove"""
+    async def on_raw_reaction_remove(
+            self, payload: discord.RawReactionActionEvent):
+        """On raw reaction remove check if reaction is a
+            reaction role and in correct channel, if so remove"""
         await self.reaction_remove_check(
-            payload.guild_id, 
-            payload.channel_id, 
-            payload.emoji, 
+            payload.guild_id,
+            payload.channel_id,
+            payload.emoji,
             self.bot.get_user(payload.user_id))
 
     @command(name='reactionroles', aliases=['rr'], hidden=True)
@@ -78,7 +89,6 @@ class ReactionRoles(Cog, name='Reaction Roles'):
         for role in self.__database.get_reaction_roles(ctx.guild.id):
             logging.info(role)
 
-    
     @command(name='addreaction', hidden=True)
     async def add_reaction_role(self, ctx, emoji: str, role: discord.Role):
         """Add a reaction role"""
@@ -90,9 +100,9 @@ class ReactionRoles(Cog, name='Reaction Roles'):
         logging.info(f'Added reaction role {emoji} {role.name}')
         await ctx.send(f'Added reaction role {emoji} {role.name}')
 
-
     @command(name='removereaction', hidden=True)
-    async def remove_reaction_role(self, ctx, emoji: str, role: discord.Role):
+    async def remove_reaction_role(
+            self, ctx, emoji: str, role: discord.Role):
         """Remove a reaction role"""
         self.__database.remove_reaction_role(
             guild_id=str(ctx.guild.id),

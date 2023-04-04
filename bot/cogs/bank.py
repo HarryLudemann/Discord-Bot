@@ -3,6 +3,7 @@ import logging
 if __name__ != '__main__':
     from bot.database import BankDatabase
 
+
 class Bank(Cog, name='Bank'):
     """User bank accounts"""
     def __init__(self, bot):
@@ -15,7 +16,7 @@ class Bank(Cog, name='Bank'):
             self.__database.create_user(str(member.id))
             logging.info(f'Created bank account for {member}')
 
-    @command(name='balance', aliases = ["bal"], help='Check your balance')
+    @command(name='balance', aliases=["bal"], help='Check your balance')
     async def bal(self, ctx, member: MemberConverter = None):
         """Check your balance.
 
@@ -28,13 +29,14 @@ class Bank(Cog, name='Bank'):
         """
         if member is None:
             member = ctx.author
-        balance = self.__database.get_user_balance(str(ctx.guild.id), str(member.id))
+        balance = self.__database.get_user_balance(
+            str(ctx.guild.id), str(member.id))
         if balance is None:
             await ctx.send('Failed it register')
             return
         await ctx.send(f'{member} has {balance} coins')
 
-    @command(name='pay', aliases = ["give"], help='Pay another user')
+    @command(name='pay', aliases=["give"], help='Pay another user')
     async def pay(self, ctx, member: MemberConverter, amount: int):
         """Pay another user.
 
@@ -50,13 +52,15 @@ class Bank(Cog, name='Bank'):
         if amount < 0:
             await ctx.send('You cannot pay a negative amount')
             return
-        if self.__database.get_user_balance(str(ctx.guild.id), str(ctx.author.id)) < amount:
+        if self.__database.get_user_balance(
+                str(ctx.guild.id), str(ctx.author.id)) < amount:
             await ctx.send('You do not have enough coins')
             return
-        self.__database.pay_user(str(ctx.guild.id), str(ctx.author.id), str(member.id), amount)
+        self.__database.pay_user(
+            str(ctx.guild.id), str(ctx.author.id), str(member.id), amount)
         await ctx.send(f'You paid {member} {amount} coins')
 
-    @command(name='register', aliases = ["reg"], hidden=True)
+    @command(name='register', aliases=["reg"], hidden=True)
     async def register(self, ctx):
         """Manually create an account.
 
@@ -69,7 +73,7 @@ class Bank(Cog, name='Bank'):
             await ctx.send(f'Account created for {ctx.author}')
         else:
             await ctx.send(f'Account already exists for {ctx.author}')
-    
+
     @command(name='setbal', hidden=True)
     @has_permissions(administrator=True)
     async def setbal(self, ctx, member: MemberConverter, amount: int):
@@ -87,7 +91,8 @@ class Bank(Cog, name='Bank'):
         if amount < 0:
             await ctx.send('You cannot set a negative balance')
             return
-        self.__database.set_user_balance(str(ctx.guild.id), str(member.id), amount)
+        self.__database.set_user_balance(
+            str(ctx.guild.id), str(member.id), amount)
         await ctx.send(f'Set {member}\'s balance to {amount} coins')
 
 

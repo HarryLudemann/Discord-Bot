@@ -1,6 +1,7 @@
 from discord.ext.commands import Cog, command
-from discord import Embed, Colour, Member
+from discord import Embed, Colour
 from random import choice
+
 
 def get_dad_joke() -> str:
     """Get a random joke from the jokes.txt file"""

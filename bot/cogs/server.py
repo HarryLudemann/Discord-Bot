@@ -44,7 +44,8 @@ class Server(Cog, name='Server'):
 
     @command(name='kick', help='Kicks a member from the server', hidden=True)
     @has_permissions(kick_members=True)
-    async def kick(self, ctx, member: MemberConverter, *, reason: Optional[str] = None):
+    async def kick(self, ctx,
+                   member: MemberConverter, *, reason: Optional[str] = None):
         """Kicks a member from the server, must have kick_members permission.
 
         Parameters
@@ -60,7 +61,8 @@ class Server(Cog, name='Server'):
 
     @command(name='ban', help='Bans a member from the server', hidden=True)
     @has_permissions(ban_members=True)
-    async def ban(self, ctx, member: MemberConverter, *, reason: Optional[str] = None):
+    async def ban(self, ctx,
+                  member: MemberConverter, *, reason: Optional[str] = None):
         """Bans a member from the server, must have ban_members permission.
 
         Parameters
@@ -73,6 +75,7 @@ class Server(Cog, name='Server'):
         await member.ban(reason=reason)
         logging.info(f'{ctx.author} banned {member} from the server')
         await ctx.send(f'{member} was banned from the server')
+
 
 async def setup(bot):
     await bot.add_cog(Server(bot))
